@@ -102,4 +102,106 @@ def register_vehicle():
     print(f"Allocated slot: {slot}")
     print(f"Entry time: {entry_time.strftime('%Y-%m-%d %H:%M:%S')}")
     register_vehicle()
+    def calculate_fee(duration_hours):
+    if duration_hours <= 1:
+        return 50
+    else:
+        additional_hours = duration_hours - 1
+        return 50 + (additional_hours * 30)
+        def vehicle_exit():
+    print("\n========================================")
+    print("           VEHICLE EXIT")
+    print("========================================")
+
+    registration = input("Enter vehicle registration number: ").strip().upper()
+
+    if registration not in vehicles:
+        print("\nVehicle not found in the parking lot.")
+        return
+
+    vehicle = vehicles[registration]
+
+    entry_time = vehicle["entry_time"]
+    exit_time = datetime.now()
+
+    # Calculate time spent in the parking lot
+    duration = exit_time - entry_time
+    total_minutes = duration.total_seconds() / 60
+
+    # Round up to the next hour
+    duration_hours = max(1, int((total_minutes + 59) // 60))
+
+    # Calculate parking fee
+    amount = calculate_fee(duration_hours)
+
+    print("\n----------------------------------------")
+    print(f"Vehicle:       {registration}")
+    print(f"Parking slot:  {vehicle['slot']}")
+    print(f"Entry time:    {entry_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Exit time:     {exit_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Time parked:   {duration_hours} hour(s)")
+    print(f"Amount due:    KSh {amount}")
+    print("----------------------------------------")
+
+    payment_successful = process_payment(registration, amount)
+
+if payment_successful:
+    open_barrier()
+
+    # Release the parking slot
+    release_slot(vehicle["slot"])
+
+    # Remove vehicle from active parking records
+    del vehicles[registration]
+
+    print(f"\nParking slot {vehicle['slot']} is now AVAILABLE.")
+else:
+    close_barrier()
+    print("Vehicle remains in the parking lot.")
+
+return payment_successful
 display_parking_slots()
+vehicle_exit()
+def process_payment(registration, amount):
+    print("\n========================================")
+    print("            PAYMENT")
+    print("========================================")
+    print(f"Amount to pay: KSh {amount}")
+
+    payment_method = input(
+        "Enter payment method (Cash/M-Pesa/Card): "
+    ).strip().title()
+
+    payment = input("Enter amount paid: KSh ")
+
+    try:
+        payment = float(payment)
+    except ValueError:
+        print("\nInvalid payment amount.")
+        return False
+
+    if payment < amount:
+        balance = amount - payment
+        print(f"\nPayment incomplete.")
+        print(f"Remaining balance: KSh {balance:.2f}")
+        return False
+
+    change = payment - amount
+
+    print("\nPayment successful!")
+    print(f"Payment method: {payment_method}")
+    print(f"Amount paid: KSh {payment:.2f}")
+
+    if change > 0:
+        print(f"Change: KSh {change:.2f}")
+
+    return True
+    def open_barrier():
+    print("\n========================================")
+    print("          EXIT BARRIER")
+    print("========================================")
+    print("Payment confirmed.")
+    print("Barrier OPEN.")
+    print("Vehicle may exit.")
+    def close_barrier():
+    print("Barrier CLOSED.")
