@@ -101,3 +101,5 @@ def register_vehicle():
     print(f"Vehicle type: {vehicle_type}")
     print(f"Allocated slot: {slot}")
     print(f"Entry time: {entry_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    register_vehicle()
+display_parking_slots()
