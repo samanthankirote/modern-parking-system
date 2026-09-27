@@ -60,3 +60,44 @@ else:
     print("\nParking is full.")
 
 display_parking_slots()
+
+from datetime import datetime
+
+vehicles = {}
+
+
+def register_vehicle():
+    print("\n========================================")
+    print("          VEHICLE ENTRY")
+    print("========================================")
+
+    registration = input("Enter vehicle registration number: ").strip().upper()
+    vehicle_type = input("Enter vehicle type: ").strip().title()
+
+    # Check whether the vehicle is already inside
+    if registration in vehicles:
+        print("\nVehicle is already registered in the parking lot.")
+        return
+
+    # Find an available parking slot
+    slot = allocate_slot()
+
+    if slot is None:
+        print("\nSorry, the parking lot is full.")
+        return
+
+    # Record the entry time
+    entry_time = datetime.now()
+
+    # Store vehicle information
+    vehicles[registration] = {
+        "vehicle_type": vehicle_type,
+        "slot": slot,
+        "entry_time": entry_time
+    }
+
+    print("\nVehicle successfully registered!")
+    print(f"Registration: {registration}")
+    print(f"Vehicle type: {vehicle_type}")
+    print(f"Allocated slot: {slot}")
+    print(f"Entry time: {entry_time.strftime('%Y-%m-%d %H:%M:%S')}")
